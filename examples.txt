@@ -1,0 +1,414 @@
+(*MULTI-LINE EXPRESSIONS*)
+letrec sum : Nat -> Nat -> Nat =
+  lambda n : Nat. lambda m : Nat. 
+    if iszero n then m 
+    else succ (sum (pred n) m)
+in
+  sum 21 34
+;;
+
+
+(*PRETTY-PRINTER*)
+letrec sum : Nat -> Nat -> Nat =
+  lambda n : Nat. lambda m : Nat. 
+    if iszero n then m 
+    else succ (sum (pred n) m)
+in
+  sum
+;;
+
+
+(*INTERNAL FIXED-POINT COMBINATOR*)
+(*SUM:*)
+letrec sum : Nat -> Nat -> Nat =
+  lambda n : Nat. lambda m : Nat. 
+    if iszero n then m 
+    else succ (sum (pred n) m)
+in
+  sum 21 34
+;;
+
+(*PROD:*)
+letrec sum : Nat -> Nat -> Nat =
+  lambda n: Nat. lambda m : Nat.
+	  if iszero n then m
+	  else succ (sum (pred n) m)
+  in
+    letrec prod: Nat -> Nat -> Nat =
+	    lambda n: Nat. lambda m: Nat. 
+        if iszero m then 0 
+        else sum n (prod n (pred m))
+    in
+prod 12 5;;
+
+(*FIBONACCI:*)
+letrec sum : Nat -> Nat -> Nat =                                 	 
+lambda n : Nat. lambda m : Nat.
+  if iszero n then
+	m
+  else
+	succ (sum (pred n) m)
+  in
+	letrec fib: Nat -> Nat =
+  	lambda n : Nat.
+    	if iszero n then
+      	0
+    	else
+      	if iszero (pred n) then
+        	1
+      	else
+        	sum(fib (pred (pred n))) (fib (pred n))
+in fib 5;;  
+
+(*FACTORIAL:*)
+letrec sum : Nat -> Nat -> Nat =                                 	 
+lambda n : Nat. lambda m : Nat.
+  if iszero n then
+	m
+  else
+	succ (sum (pred n) m) 
+  in
+    letrec prod : Nat -> Nat -> Nat =
+    lambda n : Nat. lambda m : Nat.
+      if iszero n then
+        0
+      else
+        sum (prod (pred n) m) m 
+       in
+         letrec fact: Nat -> Nat =
+         lambda n : Nat.
+         if iszero n then
+           1
+         else
+            prod n (fact (pred n))
+in fact 5;;
+
+
+(*GLOBAL DEFINITIONS CONTEXT*)
+x = 5;;
+
+succ x;;
+
+f = lambda y : Nat.x;;
+
+f 3;;
+
+x = 7;;
+
+f 4;;
+
+x;;
+
+sum = letrec sum : Nat -> Nat -> Nat =
+  lambda n : Nat. lambda m : Nat. if iszero n then m else succ (sum (pred n) m)
+in
+  sum;;
+
+sum x 3;;
+
+N = Nat;;
+
+N2 = N -> N;;
+
+N3 = N -> N2;;
+
+
+(*STRING TYPE*)
+"";;
+
+"abc";;
+
+concat "para" "sol";;
+
+concat (concat "para" "sol") "es";
+
+lambda s : String. s;;
+
+(lambda s : String.s) "abc";;
+
+letrec replicate : String -> Nat -> String =
+  lambda s : String. lambda n : Nat.
+	if iszero n then "" else concat s (replicate s (pred n))
+  in
+  replicate "abc" 3
+;;
+
+concat ((lambda s : String.s) "abc") "de";;
+
+
+let s = letrec replicate : String -> Nat -> String =
+  lambda s : String. lambda n : Nat.
+	if iszero n then "" else concat s (replicate s (pred n))
+  in
+  replicate "abc" 3
+in concat s s
+;;
+
+length "12345";;
+
+compare "hola" "hola";;
+
+compare "hola1" "hola";;
+
+compare "hola" "hola1";;
+
+
+(*TUPLES*)
+{5, true};;
+
+{5, true, "abc"};;
+
+{5, true, "abc"}.1;;
+
+{5, true, "abc"}.2;;
+
+{5, true, "abc"}.3;;
+
+{5, true, "abc"}.4;;(*Error*)
+
+{5, {true, "abc"}};;
+
+{5, {true, "abc"}}.1;;
+
+{5, {true, "abc"}}.2;;
+
+{5, {true, "abc"}}.2.1;;
+
+{5, {true, "abc"}}.2.2;;
+
+t = {5, {true, "abc"}};;
+
+t.1;;
+
+t.2;;
+
+t.2.1;;
+
+t.2.2;;
+
+
+(*RECORDS*)
+{x=2, y=5, z=0};;
+
+{x=2, y=5, z=0}.x;;
+
+{x=2, y=5, z=0}.y;;
+
+{x=2, y=5, z=0}.y;;
+
+{x=2, y=5, z=0}.1;;(*Error*)
+
+{x=2, y=5, z=0}.h;;(*Error*)
+
+p = {na={"luis", "vidal"}, e=28};;
+
+p.na;;
+
+p.na.1;;
+
+p.na.2;;
+
+p.e;; 
+
+
+(*VARIANTS*)
+Int = <pos:Nat, zero:Bool, neg:Nat>;;
+
+p3 = <pos=3> as Int;;
+
+z0 = <zero=true> as Int;;
+
+n5 = <neg=5> as Int;;
+
+is_zero = L i : Int.
+  case i of
+    <pos=p> => false
+  | <zero=z> => true
+  | <neg=n> => false
+;;
+
+is_zero p3;;
+
+is_zero z0;;
+
+is_zero n5;;
+
+abs = L i : Int.
+  case i of
+    <pos=p> => (<pos=p> as Int)
+  | <zero=z> => (<zero=true> as Int)
+  | <neg=n> => (<pos=n> as Int);;
+
+abs p3;;
+
+abs z0;;
+
+abs n5;;
+
+(*FUNCIÓN ADD*)
+
+sum = letrec sum : Nat -> Nat -> Nat =
+  lambda n : Nat. lambda m : Nat. 
+  if iszero n then m 
+  else succ (sum (pred n) m)
+in
+  sum
+;;
+
+sub = letrec sub : Nat -> Nat -> Nat =
+  lambda n : Nat. lambda m : Nat.
+    if iszero m then n
+    else if iszero n then m
+    else sub (pred n) (pred m)
+in
+  sub
+;;
+
+is_greater = letrec is_greater : Nat -> Nat -> Bool =
+  lambda m : Nat. lambda n : Nat.
+    if iszero m then false
+    else if iszero n then true
+    else is_greater (pred m) (pred n)
+in
+  is_greater
+;;
+
+add = letrec add : Int -> Int -> Int = 
+  lambda x : Int. lambda y : Int.
+  case x of
+    <pos=p1> =>
+      (case y of
+          <pos=p2> => <pos=(sum p1 p2)> as Int
+        | <zero=z2> => <pos=p1> as Int
+        | <neg=n2> => 
+          if (is_greater p1 n2) then  <pos=(sub p1 n2)> as Int
+          else  <neg=(sub p1 n2)> as Int)
+  | <zero=z1> =>
+      (case y of
+          <pos=p2> => <pos=p2> as Int
+        | <zero=z2> => <zero=true> as Int
+        | <neg=n2> => <neg=n2> as Int)
+  | <neg=n1> =>
+      (case y of
+          <pos=p2> =>
+          if (is_greater p2 n1) then  <pos=(sub p2 n1)> as Int
+          else  <neg=(sub p2 n1)> as Int
+        | <zero=z2> => <neg=n1> as Int
+        | <neg=n2> => <neg=(sum n1 n2)> as Int)
+in add
+;;
+
+add p3 n5;;
+
+add n5 p3;;
+
+add n5 z0;;
+
+add p3 z0;;
+
+(*LISTS*)
+nil[Nat];;
+
+cons[Nat] 5 (cons[Nat] 3 nil[Nat]);;
+
+l = cons[Nat] 8 (cons[Nat] 5 (cons[Nat] 7 nil[Nat]));;
+
+isnil[Nat] l;;
+
+head[Nat] l;;
+
+tail[Nat] l;;
+
+sum = letrec sum : Nat -> Nat -> Nat =
+  lambda n : Nat. lambda m : Nat. 
+  if iszero n then m 
+  else succ (sum (pred n) m)
+in
+  sum
+;;
+
+prod = letrec prod: Nat -> Nat -> Nat =
+lambda n: Nat. lambda m: Nat. if iszero m then 0 else sum n (prod n (pred m))
+in
+prod
+;;
+
+len =
+  letrec len : List[Nat] -> Nat =
+    lambda l : List[Nat]. if isnil[Nat] l then 0 else sum 1 (len (tail[Nat] l))
+  in
+    len
+;;
+
+len l;;
+
+N3 = Nat -> Nat -> Nat;;
+
+nil[N3];;  
+
+cons[N3] sum nil[N3];;
+
+cons[N3] prod (cons[N3] sum nil[N3]);;
+
+len (cons[N3] prod (cons[N3] sum nil[N3]));; (*Error*)
+
+(head[N3] (cons[N3] prod (cons[N3] sum nil[N3]))) 12 5;;
+
+map = letrec map : List[Nat] -> (Nat -> Nat) -> List[Nat] =
+lambda lst: List[Nat]. lambda f: (Nat -> Nat). 
+        if (isnil[Nat] (tail[Nat] lst)) then
+                cons[Nat] (f (head[Nat] lst)) (nil[Nat])
+        else
+                cons[Nat] (f (head[Nat] lst)) (map (tail[Nat] lst) f)
+in map;;
+
+f = lambda x:Nat . succ x;;
+
+map l f;;
+
+append = letrec append: List[Nat] -> List[Nat] -> List[Nat] =
+lambda l1: List[Nat]. lambda l2: List[Nat].
+        if isnil[Nat] l1 then 
+                l2
+        else 
+                cons[Nat] (head[Nat] l1) (append (tail[Nat] l1) l2) 
+in append;;
+
+l2 = (cons[Nat] 5 (cons[Nat] 3 nil[Nat]));;
+
+append l l2;;
+
+
+(*SUBTYPING*)
+{};;
+
+(*IN RECORDS*)
+idr = lambda r : {}. r;;
+
+idr {x=0, y=1};;
+
+(lambda r : {x : Nat}. r.x) {x=0, y=1};;
+
+a = {x=1, y=1, z={x=1}};;
+
+b = {x=1, y=1, z=a};;
+
+(lambda r : {z : {x : Nat}}. (r.z).x) b;;
+
+(lambda r : {z : {x : Nat}}. (r.z).x) a;;
+
+(*IN LISTS*)
+l1 = (cons[{x : Nat}] {x=2, y=3} nil[{x : Nat}]);;
+
+idr2 = lambda l : List[{x : Nat}]. l;;
+
+l2 = (cons[{x : Nat, y : Nat}] {x=2, y=3} nil[{x : Nat, y : Nat}]);;
+
+idr2 l2;;
+
+(*IN VARIANTS*)
+Int = <pos:Nat, zero:Bool, neg:Nat>;;
+
+idr3 = lambda v : Int. v;;
+
+idr3 (<pos = 6> as Int);;
